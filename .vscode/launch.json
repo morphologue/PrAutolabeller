@@ -2,17 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-           "name": "SAM CLI",
-           "type": "python",
-           "request": "attach",
-           "port": 5890,
-           "host": "localhost",
-           "pathMappings": [
-               {
-                   "localRoot": "${workspaceFolder}/.aws-sam/build",
-                   "remoteRoot": "/var/task"
-               }
-           ]
-       }
-   ]
+            "name": "PrAutolabellerFunction",
+            "type": "python",
+            "request": "attach",
+            "port": 5890,
+            "host": "localhost",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/.aws-sam/build/PrAutolabellerFunction",
+                    "remoteRoot": "/var/task"
+                }
+            ]
+        }
+    ]
  }
