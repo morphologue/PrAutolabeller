@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  PrAutolabeller
+
+  GitHub PR webhook handler which may add labels to the PR based on the team of the author and/or
+  the paths changed. The mapping from team/paths to labels comes from the environment.
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  PrAutolabellerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handler.handle
+      Runtime: python3.8
+      Events:
+        PrAutolabeller:
+          Type: Api
+          Properties:
+            Path: /pr
+            Method: post
