@@ -8,10 +8,10 @@ HANDLER=$BUILDDIR/$FUNCTION/handler.py
 if ! grep -q ptvsd $HANDLER; then
     cat - $HANDLER > $HANDLER.temp <<EOF
 import ptvsd
-ptvsd.enable_attach(address=('0.0.0.0', 5890), redirect_output=True)
+ptvsd.enable_attach(address=('0.0.0.0', 5890))
 ptvsd.wait_for_attach()
 EOF
     mv $HANDLER.temp $HANDLER
 fi
 
-sam local invoke -e events/basic.json -d 5890 $FUNCTION
+sam local invoke -e events/ping.json -d 5890 $FUNCTION

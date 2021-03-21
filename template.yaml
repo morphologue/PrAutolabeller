@@ -17,6 +17,10 @@ Resources:
       CodeUri: src/
       Handler: handler.handle
       Runtime: python3.8
+      Environment:
+        Variables:
+          SIGNATURE_KEY: __SIGNATURE_KEY_PLACEHOLDER__
+          GITHUB_TOKEN: __GITHUB_TOKEN_PLACEHOLDER__
       Events:
         PrAutolabeller:
           Type: Api

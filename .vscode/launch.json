@@ -12,7 +12,8 @@
                     "localRoot": "${workspaceFolder}/.aws-sam/build/PrAutolabellerFunction",
                     "remoteRoot": "/var/task"
                 }
-            ]
+            ],
+            "redirectOutput": true
         }
     ]
  }
