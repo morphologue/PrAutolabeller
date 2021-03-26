@@ -1,6 +1,8 @@
 import os
 import hmac
 import json
+import github
+from strategy import instances as strategies
 
 def handle(event, context):
     """Handle GitHub PR webhook by adding labels to the PR based on the team of the author and/or
@@ -24,13 +26,14 @@ def handle(event, context):
         return succeed()
 
     # Disregard drafts
-    body = json.loads(event.body)
-    pr_url = body['pull_request']['url']
-    if body['pull_request']['draft']:
-        print('Ignoring draft {0}'.format(pr_url))
+    pr = json.loads(event['body'])['pull_request']
+    if pr['draft']:
+        print('Ignoring draft {0}'.format(pr['url']))
         return succeed()
     
-    user_url = body['pull_request']['user']['url']
-    print('The user URL is {0}'.format(user_url))
+    # Add required labels which are not on the PR already
+    new_labels = { label for s in strategies for label in s.calc_labels(pr) if label not in pr['labels'] }
+    print('Adding label(s) "{0}" to PR {1}'.format(", ".join(new_labels), pr['url']))
+    github.post(pr['url'] + '/labels', { 'labels': new_labels })
 
     return succeed()

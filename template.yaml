@@ -21,6 +21,8 @@ Resources:
         Variables:
           SIGNATURE_KEY: __SIGNATURE_KEY_PLACEHOLDER__
           GITHUB_TOKEN: __GITHUB_TOKEN_PLACEHOLDER__
+          TEAM_STRATEGY: OtherTeam=WorstTeam,MyTeam=BestTeam
+          PATH_STRATEGY: /test=TestPath
       Events:
         PrAutolabeller:
           Type: Api
