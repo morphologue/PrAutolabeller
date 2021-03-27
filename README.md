@@ -24,7 +24,7 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 * Docker Desktop
 * [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 * To replay GitHub responses: [mitmproxy](https://docs.mitmproxy.org/stable/overview-installation/) v0.18.2 (requires WSL on Windows)
-* To debug via the supplied [launch.json](.vscode/launch-json): VS Code
+* To debug via the supplied [launch.json](.vscode/launch.json): VS Code
 * To deploy: an AWS account
 
 ### Steps
@@ -52,7 +52,7 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 
 1. Once the lambda has started it will wait for you to attach a debugger. If you are using VS Code, you can click "Play" in the Run & Debug pane.
 
-1. Observe that the lambda interacts with the server and adds the expected labels.
+1. Observe that the lambda interacts with the HTTP replay and adds the expected labels.
 
 Some points to note:
 
