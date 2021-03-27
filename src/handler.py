@@ -2,7 +2,7 @@ import os
 import hmac
 import json
 import github
-from strategy import instances as strategies
+from strategy_context import instances as strategies
 
 def handle(event, context):
     """Handle GitHub PR webhook by adding labels to the PR based on the team of the author and/or
@@ -16,7 +16,7 @@ def handle(event, context):
         'sha256').hexdigest()
     if not hmac.compare_digest(event['headers'].get('X-Hub-Signature-256', ''), expected_dig):
         return { 'statusCode': 401, 'body': 'Unauthorized' }
-    
+
     # Disregard events except pull_request
     github_event_name = event['headers'].get('X-GitHub-Event', '')
     def succeed():
@@ -25,15 +25,25 @@ def handle(event, context):
     if github_event_name != 'pull_request':
         return succeed()
 
-    # Disregard drafts
-    pr = json.loads(event['body'])['pull_request']
+    # Disregard drafts and non-openy type actions (especially unlabelling!)
+    body = json.loads(event['body'])
+    pr = body['pull_request']
     if pr['draft']:
         print('Ignoring draft {0}'.format(pr['url']))
         return succeed()
-    
-    # Add required labels which are not on the PR already
-    new_labels = { label for s in strategies for label in s.calc_labels(pr) if label not in pr['labels'] }
+    if body['action'] not in { 'opened', 'ready_for_review', 'reopened' }:
+        print('Ignoring irrelevant action {0} on PR {1}'.format(body['action'], pr['url']))
+        return succeed()
+
+    # Gather required labels.
+    desired_labels = { label for s in strategies for label in s.calc_labels(pr) }
+    existing_labels = { label['name'] for label in pr['labels'] }
+    new_labels = desired_labels.difference(existing_labels)
+    if not len(new_labels):
+        return succeed()
+
+    # Finally, add new labels
     print('Adding label(s) "{0}" to PR {1}'.format(", ".join(new_labels), pr['url']))
-    github.post(pr['url'] + '/labels', { 'labels': new_labels })
+    github.patch(pr['issue_url'], { 'labels': list(sorted(desired_labels)) })
 
     return succeed()
