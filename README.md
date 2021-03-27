@@ -73,3 +73,6 @@ Only the `pull_request` event needs to be forwarded to the lambda: it will ignor
 * To prevent unnecessary updates (especially when removing labels!), the lambda will only respond to the `opened`, `ready_for_review` and `reopened` actions.
 
 * Drafts are wholly ignored because they are an antifeature.
+
+## Licence
+This software is licensed under [AGPLv3](LICENSE).
