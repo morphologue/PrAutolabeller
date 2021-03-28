@@ -18,8 +18,8 @@ def get_paginated(url):
         res = requests.get(next_url, headers=_headers)
         res.raise_for_status()
         pages.append(res.json())
-        next_link = [link for link in res.links if link.get('rel') == 'next']
-        next_url = next_link[0]['url'] if len(next_link) else None
+        next_link = res.links.get('next')
+        next_url = next_link['url'] if next_link else None
     return [item for page in pages for item in page]
 
 def patch(url, body):

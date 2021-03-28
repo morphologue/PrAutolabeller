@@ -20,10 +20,11 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 
 ## Building and running the code locally
 
-### Prerequisites
-* Docker Desktop
+### Requirements
+* Docker
 * [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* To replay GitHub responses: [mitmproxy](https://docs.mitmproxy.org/stable/overview-installation/) v0.18.2 (requires WSL on Windows)
+* To replay GitHub responses: [mitmproxy](https://docs.mitmproxy.org/stable/overview-installation/) v6.0.2 (requires WSL and dos2unix on Windows)
+* To install the debug adapter: Python 3.8-ish
 * To debug via the supplied [launch.json](.vscode/launch.json): VS Code
 * To deploy: an AWS account
 
@@ -36,9 +37,10 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 
 1. From a different shell (WSL on Windows):
 
+        dos2unix replay.sh  # If you encounter line ending issues on Windows
         ./replay.sh
 
-    This starts an HTTP server which will replay the GitHub responses under [flows/](flows/).
+    This starts an HTTP server which will replay the GitHub responses under [mitmproxy/](mitmproxy/).
 
 1. Back in the first shell:
 
@@ -52,13 +54,13 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 
 1. Once the lambda has started it will wait for you to attach a debugger. If you are using VS Code, you can click "Play" in the Run & Debug pane.
 
-1. Observe that the lambda interacts with the HTTP replay and adds the expected labels.
+1. Observe that the lambda interacts with the HTTP replay and sets the expected labels.
 
 Some points to note:
 
 * If you just want to trigger the lambda locally without the ability to debug it, you can run `run.sh` instead of `debug.sh`.
 
-* The [template.yaml](template.yaml) includes placeholder values for the GitHub signature key (GitHub->lambda) and GitHub API token (lambda->GitHub). Obviously these would need to be replaced prior to deployment in a real environment, however the events and saved responses in this repo use the placeholder values for your debugging convenience.
+* The [template.yaml](template.yaml) includes placeholder values for the GitHub signature key (GitHub->Lambda) and GitHub API token (Lambda->GitHub). Obviously these would need to be replaced prior to deployment in a real environment, however the events and saved responses in this repo use the placeholder values for your debugging convenience.
 
 * The GitHub responses were recorded by using a script similar to [record.sh](record.sh).
 

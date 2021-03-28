@@ -2,7 +2,7 @@ import os
 import hmac
 import json
 import github
-from strategy_context import instances as strategies
+import strategy_context
 
 def handle(event, context):
     """Handle GitHub PR webhook by adding labels to the PR based on the team of the author and/or
@@ -20,7 +20,7 @@ def handle(event, context):
     # Disregard events except pull_request
     github_event_name = event['headers'].get('X-GitHub-Event', '')
     def succeed():
-        print('Successfully handled event {0}'.format(github_event_name))
+        print('Successfully handled event "{0}"'.format(github_event_name))
         return { 'statusCode': 204 }
     if github_event_name != 'pull_request':
         return succeed()
@@ -32,18 +32,19 @@ def handle(event, context):
         print('Ignoring draft {0}'.format(pr['url']))
         return succeed()
     if body['action'] not in { 'opened', 'ready_for_review', 'reopened' }:
-        print('Ignoring irrelevant action {0} on PR {1}'.format(body['action'], pr['url']))
+        print('Ignoring irrelevant action "{0}" on PR {1}'.format(body['action'], pr['url']))
         return succeed()
 
     # Gather required labels.
-    desired_labels = { label for s in strategies for label in s.calc_labels(pr) }
+    desired_labels = strategy_context.calc_labels(pr)
     existing_labels = { label['name'] for label in pr['labels'] }
     new_labels = desired_labels.difference(existing_labels)
     if not len(new_labels):
         return succeed()
+    final_labels = list(sorted(desired_labels.union(existing_labels)))
 
     # Finally, add new labels
-    print('Adding label(s) "{0}" to PR {1}'.format(", ".join(new_labels), pr['url']))
-    github.patch(pr['issue_url'], { 'labels': list(sorted(desired_labels)) })
+    print('Setting label(s) to "{0}" on PR {1}'.format(", ".join(final_labels), pr['url']))
+    github.patch(pr['issue_url'], { 'labels': final_labels })
 
     return succeed()
