@@ -77,4 +77,4 @@ Only the `pull_request` event needs to be forwarded to the lambda: it will ignor
 * Drafts are wholly ignored because they are an antifeature.
 
 ## Licence
-This software is licensed under [AGPLv3](LICENSE).
+This software is licensed under the [MIT licence](LICENSE).
