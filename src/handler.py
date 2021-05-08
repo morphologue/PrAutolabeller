@@ -25,26 +25,27 @@ def handle(event, context):
     if github_event_name != 'pull_request':
         return succeed()
 
-    # Disregard drafts and non-openy type actions (especially unlabelling!)
+    # Disregard non-openy type actions (especially unlabelling!)
     body = json.loads(event['body'])
     pr = body['pull_request']
-    if pr['draft']:
-        print('Ignoring draft {0}'.format(pr['url']))
-        return succeed()
-    if body['action'] not in { 'opened', 'ready_for_review', 'reopened' }:
+    if body['action'] not in { 'opened', 'ready_for_review', 'convert_to_draft', 'reopened' }:
         print('Ignoring irrelevant action "{0}" on PR {1}'.format(body['action'], pr['url']))
         return succeed()
 
-    # Gather required labels.
-    desired_labels = strategy_context.calc_labels(pr)
+    # Gather required changes
     existing_labels = { label['name'] for label in pr['labels'] }
-    new_labels = desired_labels.difference(existing_labels)
-    if not len(new_labels):
+    target_labels = existing_labels.copy()
+    for label, requirement in strategy_context.calc_labels(pr).items():
+        if requirement:
+            target_labels.add(label)
+        elif label in target_labels:
+            target_labels.remove(label)
+    if existing_labels == target_labels:
         return succeed()
-    final_labels = list(sorted(desired_labels.union(existing_labels)))
 
-    # Finally, add new labels
-    print('Setting label(s) to "{0}" on PR {1}'.format(", ".join(final_labels), pr['url']))
-    github.patch(pr['issue_url'], { 'labels': final_labels })
+    # Make required changes
+    ordered_labels = list(sorted(target_labels))
+    print('Setting label(s) to "{0}" on PR {1}'.format(", ".join(ordered_labels), pr['url']))
+    github.patch(pr['issue_url'], { 'labels': ordered_labels })
 
     return succeed()

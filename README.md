@@ -9,6 +9,10 @@ If the `TEAM_STRATEGY` variable is present in the environment, the lambda will a
 
 Nested teams are respected: if a user who is a member of both Team1 and Team2 opens a PR, the lambda will ascribe both Label1 and Label2 to the PR.
 
+If the user is _not_ a member of a specified team, but the team's label was added manually, the lambda will remove the incorrect label.
+
+For drafts, all team-based labels will be removed, always.
+
 ### Labels for changed paths
 If the `PATH_STRATEGY` variable is present in the environment, the lambda will attempt to add labels on the basis of changed files. The variable's value is formatted as follows:
 
@@ -17,6 +21,21 @@ If the `PATH_STRATEGY` variable is present in the environment, the lambda will a
 The paths may include globs (e.g. `*.js=FrontEnd`). Globs don't stop at directory boundaries so `app*.js` would match `/application/files/index.js`.
 
 Note that a leading slash is prepended to GitHub's idea of the path, so a file at the repo root can be referred to as `/file.txt`.
+
+If a PR does _not_ alter a certain path, but the path's label was added manually, the lambda will remove the incorrect label.
+
+For drafts, all path-based labels will be removed, always.
+
+### Constant labels
+If the `CONST_STRATEGY` variable is present in the environment, the lambda will either add (=`true`) or remove (=`false`) the labels specified therein:
+
+        Label1=true,Label2=false
+
+For drafts, all specified labels will be removed irrespective of `true` or `false`.
+
+### Disambiguation
+If a label should be both added and removed via different strategies (or by its repeated configuration for the one strategy), then the label will be
+_added_ rather than removed.
 
 ## Building and running the code locally
 
@@ -72,9 +91,9 @@ Only the `pull_request` event needs to be forwarded to the lambda: it will ignor
 ## Caveats
 * The lambda can only add _existing_ labels to a PR. You can make a label in the web UI via `https://github.com/{owner}/{repo}/issues/labels`, e.g. https://github.com/morphologue/PrAutolabeller/issues/labels.
 
-* To prevent unnecessary updates (especially when removing labels!), the lambda will only respond to the `opened`, `ready_for_review` and `reopened` actions.
+* To prevent unnecessary updates (especially when removing labels!), the lambda will only respond to the `opened`, `ready_for_review`, `convert_to_draft` and `reopened` actions.
 
-* Drafts are wholly ignored because they are an antifeature.
+* Labels can only be removed from drafts because drafts are an antifeature.
 
 ## Licence
 This software is licensed under the [MIT licence](LICENSE).
