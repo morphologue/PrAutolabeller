@@ -14,4 +14,4 @@ EOF
     mv $HANDLER.temp $HANDLER
 fi
 
-sam local invoke -e events/pull_request.json -d 5890 $FUNCTION
+sam local invoke -e events/${1:-pull_request}.json -d 5890 $FUNCTION

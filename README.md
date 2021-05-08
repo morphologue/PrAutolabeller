@@ -29,7 +29,7 @@ For drafts, all path-based labels will be removed, always.
 ### Constant labels
 If the `CONST_STRATEGY` variable is present in the environment, the lambda will either add (=`true`) or remove (=`false`) the labels specified therein:
 
-        Label1=true,Label2=false
+        true=Label1,false=Label2,true=Label3
 
 For drafts, all specified labels will be removed irrespective of `true` or `false`.
 

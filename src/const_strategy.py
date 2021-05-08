@@ -9,4 +9,4 @@ class ConstStrategy(StrategyBase):
         if basic != None:
             return basic
 
-        return { label: value == 'true' for label, value in self.config.items() }
+        return [(label, value == 'true') for value, label in self.config]

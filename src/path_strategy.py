@@ -11,10 +11,10 @@ class PathStrategy(StrategyBase):
         if basic != None:
             return basic
 
-        label_requirements = {}
+        label_requirements = []
         for file in github.get_paginated(pr['url'] + '/files'):
             file_name = '/' + file['filename']
-            for pattern, label in self.config.items():
-                label_requirements[label] = label_requirements.get(label, False) or fnmatch(file_name, pattern)
+            for pattern, label in self.config:
+                label_requirements.append((label, fnmatch(file_name, pattern)))
 
         return label_requirements

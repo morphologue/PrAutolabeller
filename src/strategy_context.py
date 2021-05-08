@@ -7,7 +7,7 @@ def _get_config(section):
     if section not in environ:
         return None
     pairs = environ[section].split(',')
-    return { splat[0]: splat[1] for splat in [ pair.split('=') for pair in pairs ] }
+    return [(splat[0], splat[1]) for splat in [pair.split('=') for pair in pairs]]
 
 _instances = [
     ConstStrategy(_get_config('CONST_STRATEGY')),
@@ -16,7 +16,7 @@ _instances = [
 ]
 
 def calc_labels(pr):
-    all_pairs = [(k, v) for s in _instances for k, v in s.calc_labels(pr).items()]
+    all_pairs = [pair for s in _instances for pair in s.calc_labels(pr)]
     consolidated = {}
     for label, requirement in all_pairs:
         consolidated[label] = consolidated.get(label, False) or requirement
