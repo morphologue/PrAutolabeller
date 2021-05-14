@@ -1,5 +1,5 @@
 from os import environ
-from const_strategy import ConstStrategy
+from readiness_strategy import ReadinessStrategy
 from team_strategy import TeamStrategy
 from path_strategy import PathStrategy
 
@@ -9,10 +9,14 @@ def _get_config(section):
     pairs = environ[section].split(',')
     return [(splat[0], splat[1]) for splat in [pair.split('=') for pair in pairs]]
 
+_types = {
+    ReadinessStrategy: _get_config('READINESS_STRATEGY'),
+    TeamStrategy: _get_config('TEAM_STRATEGY'),
+    PathStrategy: _get_config('PATH_STRATEGY')
+}
+
 _instances = [
-    ConstStrategy(_get_config('CONST_STRATEGY')),
-    TeamStrategy(_get_config('TEAM_STRATEGY')),
-    PathStrategy(_get_config('PATH_STRATEGY'))
+    Ctor(config) for Ctor, config in _types.items() if config != None
 ]
 
 def calc_labels(pr):

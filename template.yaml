@@ -21,7 +21,7 @@ Resources:
         Variables:
           SIGNATURE_KEY: __SIGNATURE_KEY_PLACEHOLDER__
           GITHUB_TOKEN: __GITHUB_TOKEN_PLACEHOLDER__
-          CONST_STRATEGY: true=WorstTeam
+          READINESS_STRATEGY: draft=Draft,pr=WorstTeam
           TEAM_STRATEGY: MyTeam=BestTeam,OtherTeam=WorstTeam
           PATH_STRATEGY: /test/*=TestPath,*.js=FrontEnd
       Events:

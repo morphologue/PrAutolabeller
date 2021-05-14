@@ -1,5 +1,5 @@
 # PrAutolabeller
-Add labels to GitHub PRs based on the team of the author and/or the paths changed.
+Add labels to GitHub PRs based on the team of the author, the paths changed, and/or readiness for review.
 
 ## Configuration
 ### Labels for team members
@@ -10,8 +10,6 @@ If the `TEAM_STRATEGY` variable is present in the environment, the lambda will a
 Nested teams are respected: if a user who is a member of both Team1 and Team2 opens a PR, the lambda will ascribe both Label1 and Label2 to the PR.
 
 If the user is _not_ a member of a specified team, but the team's label was added manually, the lambda will remove the incorrect label.
-
-For drafts, all team-based labels will be removed, always.
 
 ### Labels for changed paths
 If the `PATH_STRATEGY` variable is present in the environment, the lambda will attempt to add labels on the basis of changed files. The variable's value is formatted as follows:
@@ -24,14 +22,20 @@ Note that a leading slash is prepended to GitHub's idea of the path, so a file a
 
 If a PR does _not_ alter a certain path, but the path's label was added manually, the lambda will remove the incorrect label.
 
-For drafts, all path-based labels will be removed, always.
+### Labels for readiness
+If the `READINESS_STRATEGY` variable is present in the environment, the lambda will add labels for the given readiness states. The variable's value is formatted as follows:
 
-### Constant labels
-If the `CONST_STRATEGY` variable is present in the environment, the lambda will either add (=`true`) or remove (=`false`) the labels specified therein:
+        State1=Label1,State2=Label2,...
 
-        true=Label1,false=Label2,true=Label3
+The possible states are as follows:
+| State           | Meaning                                 |
+| -----           | -------                                 |
+| draft           | A PR which is not ready for review      |
+| pr              | A PR which is ready for review          |
+| true            | Always true, irrespective of readiness  |
+| (anything else) | Always false, irrespective of readiness |
 
-For drafts, all specified labels will be removed irrespective of `true` or `false`.
+If a configured label was added manually but does not match the PR's readiness according to the above table, the lambda will remove the incorrect label.
 
 ### Disambiguation
 If a label should be both added and removed via different strategies (or by its repeated configuration for the one strategy), then the label will be
@@ -80,8 +84,6 @@ Only the `pull_request` event needs to be forwarded to the lambda: it will ignor
 * The lambda can only add _existing_ labels to a PR. You can make a label in the web UI via `https://github.com/{owner}/{repo}/issues/labels`, e.g. https://github.com/morphologue/PrAutolabeller/issues/labels.
 
 * To prevent unnecessary updates (especially when removing labels!), the lambda will only respond to the `opened`, `ready_for_review`, `convert_to_draft` and `reopened` actions.
-
-* Labels can only be removed from drafts because drafts are an antifeature.
 
 ## Licence
 This software is licensed under the [MIT licence](LICENSE).

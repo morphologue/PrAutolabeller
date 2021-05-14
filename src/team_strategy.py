@@ -1,22 +1,17 @@
 import github
 from urllib.parse import urlparse
 from requests import exceptions
-from strategy_base import StrategyBase
 
-class TeamStrategy(StrategyBase):
+class TeamStrategy:
     def __init__(self, config):
-        super().__init__(config)
+        self._config = config
 
     def calc_labels(self, pr):
-        basic = super().calc_labels(pr)
-        if basic != None:
-            return basic
-
         label_requirements = []
         parsed = urlparse(pr['url'])
         orgs_url = '{0}://{1}/user/orgs'.format(parsed.scheme, parsed.netloc)
         for org in github.get(orgs_url):
-            for team_slug, label in self.config:
+            for team_slug, label in self._config:
                 membership_url = '{0}/teams/{1}/memberships/{2}'.format(org['url'], team_slug, pr['user']['login'])
                 try:
                     membership = github.get(membership_url)
