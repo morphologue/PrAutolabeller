@@ -2,18 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PrAutolabellerFunction",
-            "type": "python",
-            "request": "attach",
-            "port": 5890,
-            "host": "localhost",
-            "pathMappings": [
-                {
-                    "localRoot": "${workspaceFolder}/.aws-sam/build/PrAutolabellerFunction",
-                    "remoteRoot": "/var/task"
-                }
-            ],
-            "redirectOutput": true
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "PR",
+            "invokeTarget": {
+                "target": "template",
+                "templatePath": "${workspaceFolder}/template.yaml",
+                "logicalId": "PrAutolabellerFunction"
+            },
+            "lambda": {
+                "payload": {
+                    "path": "events/pull_request.json"
+                },
+                "environmentVariables": {}
+            },
+            "sam": {
+                "containerBuild": true
+            }
+        },
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "Draft",
+            "invokeTarget": {
+                "target": "template",
+                "templatePath": "${workspaceFolder}/template.yaml",
+                "logicalId": "PrAutolabellerFunction"
+            },
+            "lambda": {
+                "payload": {
+                    "path": "events/draft.json"
+                },
+                "environmentVariables": {}
+            },
+            "sam": {
+                "containerBuild": true
+            }
         }
     ]
  }
