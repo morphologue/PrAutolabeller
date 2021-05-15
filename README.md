@@ -47,7 +47,7 @@ _added_ rather than removed.
 * Docker
 * [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 * To replay GitHub responses: [mitmproxy](https://docs.mitmproxy.org/stable/overview-installation/) v6.0.2 (requires WSL and dos2unix on Windows)
-* To debug via the supplied [launch.json](.vscode/launch.json): VS Code
+* To debug via the supplied [launch.json](.vscode/launch.json): VS Code with the AWS Toolkit extension
 * To deploy: an AWS account
 
 ### Steps to debug locally
