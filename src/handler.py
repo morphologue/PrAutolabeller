@@ -28,7 +28,7 @@ def handle(event, context):
     # Disregard non-openy type actions (especially unlabelling!)
     body = json.loads(event['body'])
     pr = body['pull_request']
-    if body['action'] not in { 'opened', 'ready_for_review', 'convert_to_draft', 'reopened' }:
+    if body['action'] not in { 'opened', 'ready_for_review', 'converted_to_draft', 'reopened' }:
         print('Ignoring irrelevant action "{0}" on PR {1}'.format(body['action'], pr['url']))
         return succeed()
 
